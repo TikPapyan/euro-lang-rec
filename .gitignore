@@ -3,9 +3,11 @@
 
 ### Custom ###
 
-clean_txt
+de_xml_txt
 europarl
 tools
+trigrams
+*.pkl
 
 ### Linux ###
 *~
