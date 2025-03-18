@@ -1,38 +1,80 @@
-from bs4 import BeautifulSoup
 import os
+from bs4 import BeautifulSoup
+from tqdm import tqdm
+import nltk
 
-input = 'europarl/txt'
-output = 'de_xml_txt'
+nltk.download('punkt_tab')
 
-def de_xml_file(file_path, output_path):
+def de_xml_file(file_path):
     try:
         with open(file_path, 'r', encoding='utf-8') as file:
             content = file.read()
     except UnicodeDecodeError:
-        with open(file_path, 'r', encoding='latin-1') as file:
-            content = file.read()
+        try:
+            with open(file_path, 'r', encoding='latin-1') as file:
+                content = file.read()
+        except Exception as e:
+            logging.error(f"Error reading {file_path}: {e}")
+            return None
     
     soup = BeautifulSoup(content, "html.parser")
     text = soup.get_text()
-    
-    with open(output_path, 'w', encoding='utf-8') as output_file:
-        output_file.write(text)
+    return text
 
-def de_xml_directory(directory_path, output_directory):
-    if not os.path.exists(output_directory):
-        os.makedirs(output_directory)
+def de_xml_dir(input_dir, output_dir):
+    if not os.path.exists(output_dir):
+        os.makedirs(output_dir)
     
-    for root, dirs, files in os.walk(directory_path):
-        for file in files:
+    for root, dirs, files in os.walk(input_dir):
+        for file in tqdm(files):
             if file.endswith('.txt'):
                 file_path = os.path.join(root, file)
-                relative_path = os.path.relpath(root, directory_path)
-                output_subdir = os.path.join(output_directory, relative_path)
+                relative_path = os.path.relpath(root, input_dir)
+                output_subdir = os.path.join(output_dir, relative_path)
                 
                 if not os.path.exists(output_subdir):
                     os.makedirs(output_subdir)
                 
                 output_file_path = os.path.join(output_subdir, file)
-                de_xml_file(file_path, output_file_path)
+                text = de_xml_file(file_path)
+                
+                if text:
+                    with open(output_file_path, 'w', encoding='utf-8') as output_file:
+                        output_file.write(text)
 
-de_xml_directory(input, output)
+def generate_trigrams(text):
+    text = text.lower().replace('\n', ' ').replace('\r', ' ')
+    return [text[i:i+3] for i in range(len(text) - 2)]
+
+def process_file(file_path):
+    with open(file_path, 'r', encoding='utf-8') as file:
+        text = file.read()
+    
+    sentences = nltk.tokenize.sent_tokenize(text)
+    trigrams = []
+    for sentence in sentences:
+        if len(sentence) >= 3:
+            trigrams.extend(generate_trigrams(sentence))
+    return trigrams
+
+def process_dir(input_dir, output_dir):
+    if not os.path.exists(output_dir):
+        os.makedirs(output_dir)
+    
+    for root, dirs, files in os.walk(input_dir):
+        for file in tqdm(files):
+            if file.endswith('.txt'):
+                file_path = os.path.join(root, file)
+                relative_path = os.path.relpath(root, input_dir)
+                output_subdir = os.path.join(output_dir, relative_path)
+                
+                if not os.path.exists(output_subdir):
+                    os.makedirs(output_subdir)
+                
+                output_file_path = os.path.join(output_subdir, file)
+                trigrams = process_file(file_path)
+                
+                if trigrams:
+                    with open(output_file_path, 'w', encoding='utf-8') as output_file:
+                        for trigram in trigrams:
+                            output_file.write(trigram + '\n')
