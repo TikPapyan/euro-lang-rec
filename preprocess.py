@@ -3,7 +3,12 @@ from bs4 import BeautifulSoup
 from tqdm import tqdm
 import nltk
 
-nltk.download('punkt_tab')
+nltk_data_dir = os.path.join(os.getcwd(), "nltk_data")
+nltk.data.path.append(nltk_data_dir)
+
+punkt_path = os.path.join(nltk_data_dir, "tokenizers", "punkt")
+if not os.path.exists(punkt_path):
+    nltk.download("punkt_tab", download_dir=nltk_data_dir)
 
 def de_xml_file(file_path):
     try:
