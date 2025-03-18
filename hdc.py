@@ -5,7 +5,7 @@ from collections import defaultdict
 from tqdm import tqdm
 
 trigram_vector_file = 'trigram_vectors.pkl'
-language_profile_file='language_profiles.pkl'
+language_profile_file='language_vectors.pkl'
 
 def generate_trigram_vectors(trigram_dir):
     trigram_vectors = {}
@@ -24,11 +24,11 @@ def generate_trigram_vectors(trigram_dir):
 
     print(f"Trigram vectors saved")
 
-def compute_language_profiles(trigram_dir):
+def compute_language_vectors(trigram_dir):
     with open(trigram_vector_file, 'rb') as f:
         trigram_vectors = pickle.load(f)
 
-    language_profiles = defaultdict(lambda: np.zeros(10000))
+    language_vectors = defaultdict(lambda: np.zeros(10000))
 
     for root, dirs, files in os.walk(trigram_dir):
         for file in tqdm(files, desc=f"Processing {root}"):
@@ -40,13 +40,12 @@ def compute_language_profiles(trigram_dir):
                     for line in f:
                         trigram = line.strip()
                         if trigram in trigram_vectors:
-                            language_profiles[language] += trigram_vectors[trigram]
+                            language_vectors[language] += trigram_vectors[trigram]
     
-    for language in language_profiles:
-        language_profiles[language] /= np.linalg.norm(language_profiles[language])
+    for language in language_vectors:
+        language_vectors[language] /= np.linalg.norm(language_vectors[language])
 
-    with open(profile_file, 'wb') as f:
-        pickle.dump(language_profiles, f)
+    with open(language_vector_file, 'wb') as f:
+        pickle.dump(language_vectors, f)
     
-    print(f"Language profiles saved to {profile_file}")
-    return language_profiles
+    print(f"Language vectors saved")
