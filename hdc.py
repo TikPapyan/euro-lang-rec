@@ -45,7 +45,7 @@ def compute_language_vectors(trigram_dir):
     for language in language_vectors:
         language_vectors[language] /= np.linalg.norm(language_vectors[language])
 
-    with open(language_vector_file, 'wb') as f:
+    with open(language_profile_file, 'wb') as f:
         pickle.dump(language_vectors, f)
     
     print(f"Language vectors saved")

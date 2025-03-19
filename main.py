@@ -1,7 +1,7 @@
 from preprocess import de_xml_dir, process_dir
 from hdc import generate_trigram_vectors, compute_language_vectors
 
-input_dir = 'europarl/txt'
+input_dir = 'txt'
 output_dir = 'de_xml_txt'
 trigram_dir = 'trigrams'
 

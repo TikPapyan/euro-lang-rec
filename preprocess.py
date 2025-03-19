@@ -19,7 +19,7 @@ def de_xml_file(file_path):
             with open(file_path, 'r', encoding='latin-1') as file:
                 content = file.read()
         except Exception as e:
-            logging.error(f"Error reading {file_path}: {e}")
+            print(f"Error reading {file_path}: {e}")
             return None
     
     soup = BeautifulSoup(content, "html.parser")
