@@ -3,11 +3,12 @@
 
 ### Custom ###
 
+*.gz
 de_xml_txt
 europarl
 tools
 trigrams
-*pkl
+*.pkl
 nltk_data
 
 ### Linux ###
