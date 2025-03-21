@@ -4,8 +4,8 @@ import numpy as np
 from collections import defaultdict
 from tqdm import tqdm
 
-trigram_vector_file = 'trigram_vectors.pkl'
-language_vector_file = 'language_vectors.pkl'
+trigram_vector_file = 'models/space_trigram_vectors.pkl'
+language_vector_file = 'models/space_language_vectors.pkl'
 
 def load_vectors(file_path):
     if os.path.exists(file_path):
